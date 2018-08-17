@@ -225,3 +225,437 @@
 ;
 ;> (tip 7.54)
 ;1.46
+
+(define tip
+  (lambda (bill)
+   (- bill (ceiling (+ bill (* bill (/ 15 100))))))
+  )
+       
+(tip 19.98)
+(tip 29.23)
+
+
+;5.1  What values are printed when you type these expressions to Scheme? (Figure it out in your head before you try it on the computer.)
+;
+;(sentence 'I '(me mine))
+;
+; Answer: '(I me mine)
+
+;(sentence '() '(is empty))
+;
+; Answer: '(is empty)
+
+;(word '23 '45)
+;
+; Answer 2345
+
+;(se '23 '45)
+;
+; Answer: '(23 45)
+;(bf 'a)
+;
+; Answer: ""
+;(bf '(aye))
+;
+; ANswer: '()
+
+;(count (first '(maggie mae)))
+;
+
+; Answer: 6
+
+;(se "" '() "" '())
+;
+; Answer: '("" "")
+
+;(count (se "" '() "" '()))
+;Answer: 2
+
+;5.2  For each of the following examples, write a procedure of two arguments that, when applied to the sample arguments, returns the sample result. Your procedures may not include any quoted data.
+;
+;> (f1 '(a b c) '(d e f))
+;(B C D E)
+;
+(define (f1 arg1 arg2)
+  (se (butfirst arg1) (butlast arg2))
+  )
+(f1 '(a b c) '(d e f))
+
+;> (f2 '(a b c) '(d e f))
+;(B C D E AF)
+;
+(define (f2 arg1 arg2)
+   (se (butfirst arg1) (se (butlast arg2) (word (first arg1) (last arg2))))
+  )
+(f2 '(a b c) '(d e f))
+;> (f3 '(a b c) '(d e f))
+;(A B C A B C)
+;
+(define (f3 arg1 arg2)
+   (se arg1 arg1)
+  )
+
+(f3 '(a b c) '(d e f))
+;> (f4 '(a b c) '(d e f))
+;BE
+(define (f4 arg1 arg2)
+   (word (item 2 arg1)(item 2 arg2))
+  )
+(f4 '(a b c) '(d e f))
+
+;5.3  Explain the difference in meaning between (first 'mezzanine) and (first '(mezzanine)).
+;
+; Answer: (first 'mezzanine) => Operates on string, whereas (first '(mezzanine)) operates on list
+;5.4  Explain the difference between the two expressions (first (square 7)) and (first '(square 7)).
+;
+;5.5  Explain the difference between (word 'a 'b 'c) and (se 'a 'b 'c).
+;
+; Answer: world concats into string but se concats into a list
+;5.6  Explain the difference between (bf 'zabadak) and (butfirst 'zabadak).
+;
+; Answer: No real differences just alias
+
+;5.7  Explain the difference between (bf 'x) and (butfirst '(x)).
+;
+; Answer: (bf 'x) => Operates on string, whereas (butfirst '(x)) operates on list
+
+;5.8  Which of the following are legal Scheme sentences?
+;
+;(here, there and everywhere) // True
+;(help!) / true
+;(all i've got to do) // false
+;(you know my name (look up the number)) // false
+
+;5.9  Figure out what values each of the following will return before you try them on the computer:
+;
+;(se (word (bl (bl (first '(make a))))
+;          (bf (bf (last '(baseball mitt)))))
+;    (word (first 'with) (bl (bl (bl (bl 'rigidly))))
+;          (first 'held) (first (bf 'stitches))))
+;
+;(se (word (bl (bl 'bring)) 'a (last 'clean))
+;    (word (bl (last '(baseball hat))) (last 'for) (bl (bl 'very))
+;	  (last (first '(sunny days)))))
+;5.10  What kinds of argument can you give butfirst so that it returns a word? A sentence?
+;
+;5.11  What kinds of argument can you give last so that it returns a word? A sentence?
+;
+;5.12  Which of the functions first, last, butfirst, and butlast can return an empty word? For what arguments? What about returning an empty sentence?
+;
+;Real Exercises
+;5.13  What does ' 'banana stand for?
+;
+; Answer: ''banana as the second quote is escaped
+;What is (first ' 'banana) and why?
+;
+; Answer: 'quote as it prints the second quote operator
+
+;5.14  Write a procedure third that selects the third letter of a word (or the third word of a sentence).
+;
+
+(define (third input)
+  (item 3 input)
+  )
+(third (se 'a 'b 'c))
+
+;5.15   Write a procedure first-two that takes a word as its argument, returning a two-letter word containing the first two letters of the argument.
+;
+;> (first-two 'ambulatory)
+;AM
+
+(define (first-two input)
+  (word (first input) (item 2 input))
+  )
+(first-two 'ambulatory)
+
+;5.16  Write a procedure two-first that takes two words as arguments, returning a two-letter word containing the first letters of the two arguments.
+;
+;> (two-first 'brian 'epstein)
+;BE
+
+(define (two-first arg1 arg2)
+  (word (first arg1) (first arg2))
+  )
+(two-first 'brian 'epstein)
+
+
+;Now write a procedure two-first-sent that takes a two-word sentence as argument, returning a two-letter word containing the first letters of the two words.
+;
+;> (two-first-sent '(brian epstein))
+;BE
+
+(define (two-first-sent input)
+  (word (first (first input)) (first (last input)))
+  )
+
+(two-first-sent '(brian epstein))
+
+;5.17  Write a procedure knight that takes a person's name as its argument and returns the name with "Sir" in front of it.
+;
+;> (knight '(david wessel))
+;(SIR DAVID WESSEL)
+
+(define (knight name)
+  (se 'sir name)
+  )
+
+(knight '(david wessel))
+
+;5.18  Try the following and explain the result:
+;
+;(define (ends word)
+;  (word (first word) (last word)))
+;
+;> (ends 'john)
+
+; Answer: Return first and last char in a word
+
+;5.19  Write a procedure insert-and that takes a sentence of items and returns a new sentence with an "and" in the right place:
+;
+;> (insert-and '(john bill wayne fred joey))
+;(JOHN BILL WAYNE FRED AND JOEY)
+
+(define (insert-and input)
+  (se (butlast input) 'and (last input))
+  )
+
+(insert-and '(john bill wayne fred joey))
+
+;5.20  Define a procedure to find somebody's middle names:
+;
+;> (middle-names '(james paul mccartney))
+;(PAUL)
+;
+;> (middle-names '(john ronald raoul tolkien))
+;(RONALD RAOUL)
+;
+;> (middle-names '(bugs bunny))
+;()
+;
+;> (middle-names '(peter blair denis bernard noone))
+;(BLAIR DENIS BERNARD)
+
+(define (middle-names input)
+  (se (butlast (butfirst input)))
+  )
+
+(middle-names '(james paul mccartney))
+(middle-names '(john ronald raoul tolkien))
+(middle-names '(bugs bunny))
+
+;5.21  Write a procedure query that turns a statement into a question by swapping the first two words and adding a question mark to the last word:
+;
+;> (query '(you are experienced))
+;(ARE YOU EXPERIENCED?)
+;
+;> (query '(i should have known better))
+;(SHOULD I HAVE KNOWN BETTER?)
+
+(define (query input)
+  (se (item 2 input) (first input) (word (last input) '?))
+  )
+
+(query '(you are experienced))
+
+;6.1  What values are printed when you type these expressions to Scheme? (Figure it out in your head before you try it on the computer.)
+;
+;(cond ((= 3 4) '(this boy))
+;      ((< 2 5) '(nowhere man))
+;      (else '(two of us)))
+;
+; Answer: '(nowhere man)
+
+;(cond (empty? 3)
+;      (square 7)
+;      (else 9))
+;
+; Answer: 9
+;
+;(define (third-person-singular verb)
+;  (cond ((equal? verb 'be) 'is)
+;        ((equal? (last verb) 'o) (word verb 'es))
+;        (else (word verb 's))))
+;
+;(third-person-singular 'go)
+
+; Answer: goes
+
+;6.2  What values are printed when you type these expressions to Scheme? (Figure it out in your head before you try it on the computer.)
+;
+;(or #f #f #f #t)
+
+; Answer:  #t
+;
+;(and #f #f #f #t)
+;
+; Answer:  #f
+;
+;(or (= 2 3) (= 4 3))
+;
+; Answer:  #f
+;
+;(not #f)
+;
+; Answer:  #t
+
+;(or (not (= 2 3)) (= 4 3))
+;
+; Answer:  #t
+;
+
+;(or (and (= 2 3) (= 3 3)) (and (< 2 3) (< 3 4)))
+;
+; Answer:  #t
+;
+
+;6.3  Rewrite the following procedure using a cond instead of the ifs:
+;
+;(define (sign number)
+;  (if (< number 0)
+;      'negative
+;      (if (= number 0)
+;	  'zero
+;	  'positive)))
+
+(define (sign number)
+  (cond
+    ((< number 0) 'negative)
+    ((= number 0) 'zero)
+    (else 'positive))
+  )
+
+;6.4  Rewrite the following procedure using an if instead of the cond:
+;
+;(define (utensil meal)
+;  (cond ((equal? meal 'chinese) 'chopsticks)
+;	(else 'fork)))
+
+(define (utensil meal)
+  (if (equal? meal 'chinese)
+      'chopsticks
+      'fork))
+
+;Real Exercises
+;Note: Writing helper procedures may be useful in solving some of these problems.
+;
+;6.5  Write a procedure european-time to convert a time from American AM/PM notation into European 24-hour notation. Also write american-time, which does the opposite:
+;
+;> (european-time '(8 am))
+;8
+;
+;> (european-time '(4 pm))
+;16
+;
+;> (american-time 21)
+;(9 PM)
+;
+;> (american-time 12)
+;(12 PM)
+;
+;> (european-time '(12 am))
+;24
+;Getting noon and midnight right is tricky.
+;
+;6.6  Write a predicate teen? that returns true if its argument is between 13 and 19.
+;
+
+(define (teen? age)
+  (if (and (> age 13) (< age 19))
+      #t
+      #f))
+
+(teen? 14)
+
+;6.7  Write a procedure type-of that takes anything as its argument and returns one of the words word, sentence, number, or boolean:
+;
+;> (type-of '(getting better))
+;SENTENCE
+;
+;> (type-of 'revolution)
+;WORD
+;
+;> (type-of (= 3 3))
+;BOOLEAN
+;(Even though numbers are words, your procedure should return number if its argument is a number.)
+;
+;Feel free to check for more specific types, such as "positive integer," if you are so inclined.
+;
+
+(define (type-of input)
+  (cond ((word? input) 'word)
+        ((sentence? input) 'sentence)
+        ((boolean? input) 'boolean)
+        ((number? input) 'number)
+        ))
+
+(type-of (= 3 3))
+
+;6.8  Write a procedure indef-article that works like this:
+;
+;> (indef-article 'beatle)
+;(A BEATLE)
+;
+;> (indef-article 'album)
+;(AN ALBUM)
+;Don't worry about silent initial consonants like the h in hour.
+;
+;6.9  Sometimes you must choose the singular or the plural of a word: 1 book but 2 books. Write a procedure thismany that takes two arguments, a number and a singular noun, and combines them appropriately:
+;
+;> (thismany 1 'partridge)
+;(1 PARTRIDGE)
+;
+;> (thismany 3 'french-hen)
+;(3 FRENCH-HENS)
+;6.10  Write a procedure sort2 that takes as its argument a sentence containing two numbers. It should return a sentence containing the same two numbers, but in ascending order:
+;
+;> (sort2 '(5 7))
+;(5 7)
+;
+;> (sort2 '(7 5))
+;(5 7)
+;6.11  Write a predicate valid-date? that takes three numbers as arguments, representing a month, a day of the month, and a year. Your procedure should return #t if the numbers represent a valid date (e.g., it isn't the 31st of September). February has 29 days if the year is divisible by 4, except that if the year is divisible by 100 it must also be divisible by 400.
+;
+;> (valid-date? 10 4 1949)
+;#T
+;
+;> (valid-date? 20 4 1776)
+;#F
+;
+;> (valid-date? 5 0 1992)
+;#F
+;
+;> (valid-date? 2 29 1900)
+;#F
+;
+;> (valid-date? 2 29 2000)
+;#T
+;6.12  Make plural handle correctly words that end in y but have a vowel before the y, such as boy. Then teach it about words that end in x (box). What other special cases can you find?
+;
+;
+;6.13  Write a better greet procedure that understands as many different kinds of names as you can think of:
+;
+;> (greet '(john lennon))
+;(HELLO JOHN)
+;
+;> (greet '(dr marie curie))
+;(HELLO DR CURIE)
+;
+;> (greet '(dr martin luther king jr))
+;(HELLO DR KING)
+;
+;> (greet '(queen elizabeth))
+;(HELLO YOUR MAJESTY)
+;
+;> (greet '(david livingstone))
+;(DR LIVINGSTONE I PRESUME?)
+;6.14  Write a procedure describe-time that takes a number of seconds as its argument and returns a more useful description of that amount of time:
+;
+;> (describe-time 45)
+;(45 SECONDS)
+;
+;> (describe-time 930)
+;(15.5 MINUTES)
+;
+;> (describe-time 30000000000)
+;(9.506426344208686 CENTURIES)
+
