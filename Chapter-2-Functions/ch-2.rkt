@@ -112,3 +112,29 @@
 	(else 'false)))
 
 (truefalse (= 2 (+ 1 1)))
+
+(define (roots a b c)
+  (se (/ (+ (- b) (sqrt (- (* b b) (* 4 a c))))
+         (* 2 a))
+      (/ (- (- b) (sqrt (- (* b b) (* 4 a c))))
+         (* 2 a))))
+
+(define (rootss a b c)
+  (roots1 a b c (sqrt (- (* b b) (* 4 a c)))))
+
+(define (roots1 a b c discriminant)
+  (se (/ (+ (- b) discriminant) (* 2 a))
+      (/ (- (- b) discriminant) (* 2 a))))
+
+(define (rootsz a b c)
+  (let ((discriminant (sqrt (- (* b b) (* 4 a c)))))
+    (se (/ (+ (- b) discriminant) (* 2 a))
+        (/ (- (- b) discriminant) (* 2 a)))))
+
+(define (rootsa a b c)
+  (let ((discriminant (sqrt (- (* b b) (* 4 a c))))
+        (minus-b (- b))
+        (two-a (* 2 a)))
+    (se (/ (+ minus-b discriminant) two-a)
+        (/ (- minus-b discriminant) two-a))))
+

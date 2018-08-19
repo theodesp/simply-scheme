@@ -712,3 +712,75 @@
 
 (describe-time 4600)
 
+;7.1  The following procedure does some redundant computation.
+;
+;(define (gertrude wd)
+;  (se (if (vowel? (first wd)) 'an 'a)
+;      wd
+;      'is
+;      (if (vowel? (first wd)) 'an 'a)
+;      wd
+;      'is
+;      (if (vowel? (first wd)) 'an 'a)
+;      wd))
+;
+;> (gertrude 'rose)
+;(A ROSE IS A ROSE IS A ROSE)
+;
+;> (gertrude 'iguana)
+;(AN IGUANA IS AN IGUANA IS AN IGUANA)
+;Use let to avoid the redundant work.
+;
+
+(define (vowel? n)
+  (member? n 'aeiuoy)
+  )
+
+(define (gertrude wd)
+  (let ([prefix-noun (lambda (w)
+                       (if (vowel? (first w)) 'an 'a))])
+    (se
+        (prefix-noun wd)
+        wd
+        'is
+        (prefix-noun wd)
+        wd
+        'is
+        (prefix-noun wd)
+        wd)
+    )
+  )
+(gertrude 'rose)
+;7.2  Put in the missing parentheses:
+;
+;> (let pi 3.14159
+;       pie 'lemon meringue
+;    se 'pi is pi 'but pie is pie)
+;(PI IS 3.14159 BUT PIE IS LEMON MERINGUE)
+
+> (let ((pi 3.14159)
+       (pie 'lemon meringue))
+    se 'pi is pi 'but pie is pie)
+;Real Exercises
+;7.3  The following program doesn't work. Why not? Fix it.
+;
+;(define (superlative adjective word)
+;  (se (word adjective 'est) word))
+;It's supposed to work like this:
+;
+;> (superlative 'dumb 'exercise)
+;(DUMBEST EXERCISE)
+
+(define (superlative adjective w)
+  (se (word adjective 'est) w))
+
+(superlative 'dumb 'exercise)
+
+;7.4  What does this procedure do? Explain how it manages to work.
+;
+;(define (sum-square a b)
+;  (let ((+ *)
+;        (* +))
+;    (* (+ a a) (+ b b))))
+
+;Answer: Replaces + with * and * with + and calculates the sum of squares 
