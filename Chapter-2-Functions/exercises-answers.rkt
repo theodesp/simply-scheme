@@ -606,6 +606,16 @@
 ;
 ;> (thismany 3 'french-hen)
 ;(3 FRENCH-HENS)
+
+(define (thismany count item)
+  (if (eq? count 1) (se count item)
+      (se count (word item 's))
+      )
+  )
+
+(thismany 1 'partridge)
+(thismany 3 'hen)
+
 ;6.10  Write a procedure sort2 that takes as its argument a sentence containing two numbers. It should return a sentence containing the same two numbers, but in ascending order:
 ;
 ;> (sort2 '(5 7))
@@ -613,6 +623,13 @@
 ;
 ;> (sort2 '(7 5))
 ;(5 7)
+
+(define (sort2 a)
+  (if (<= (first a) (last a)) a
+      (se (last a) (first a))
+      )
+  )
+
 ;6.11  Write a predicate valid-date? that takes three numbers as arguments, representing a month, a day of the month, and a year. Your procedure should return #t if the numbers represent a valid date (e.g., it isn't the 31st of September). February has 29 days if the year is divisible by 4, except that if the year is divisible by 100 it must also be divisible by 400.
 ;
 ;> (valid-date? 10 4 1949)
@@ -629,6 +646,33 @@
 ;
 ;> (valid-date? 2 29 2000)
 ;#T
+
+(define (divisible? number by)
+  (= (modulo number by) 0)
+  )
+
+(define (leap-year? year)
+  (if (and (divisible? year 4) (not (divisible? year 100))) #t
+      (if (divisible? year 400)
+          #t
+          #f)
+      )
+  )
+
+(define (valid-date? month day year)
+  (cond ((and (= month 2) (not (leap-year? year)) (> day 28)) #f)
+        ((and (not (= month 2)) (or (> day 31) (< day 1))) #f)
+        ((or (> month 12) (< month 1)) #f)
+        (else #t)
+        )
+  )
+
+(valid-date? 10 4 1949)
+(valid-date? 20 4 1776)
+(valid-date? 5 0 1992)
+(valid-date? 2 29 1900)
+(valid-date? 2 29 2000)
+
 ;6.12  Make plural handle correctly words that end in y but have a vowel before the y, such as boy. Then teach it about words that end in x (box). What other special cases can you find?
 ;
 ;
@@ -658,4 +702,13 @@
 ;
 ;> (describe-time 30000000000)
 ;(9.506426344208686 CENTURIES)
+
+(define (describe-time time)
+  (cond ((< time 60) (se time 'seconds))
+        ((< time (* 60 60)) (se (/ time 60) 'minutes))
+        ((< time (* 60 60 24)) (se (/ time (* 60 60)) 'hours))
+        )
+  )
+
+(describe-time 4600)
 
