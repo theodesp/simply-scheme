@@ -54,3 +54,53 @@
 	'(zero one two three four five six seven eight nine)))
 
 (every spell-digit 1971)
+
+
+;Lambda
+
+((lambda (a b) (+ (* 2 a) b)) 5 6)
+
+(keep (lambda (n) (member? 9 n)) '(4 81 909 781 1969 1776))
+
+(accumulate (lambda (this that)
+                (if (> (count this) (count that)) this that))
+              '(wild honey pie))
+
+(keep (lambda (person) (member? person '(john paul george ringo)))
+        '(mick smokey paul diana bill geddy john yoko keith reparata))
+
+(keep (lambda (person) (member? 'e person))
+        '(mick smokey paul diana bill geddy john yoko keith reparata))
+
+(define (make-adder num)
+  (lambda (x) (+ x num)))
+
+((make-adder 4) 7)
+
+(define (same-arg-twice fn)
+  (lambda (arg) (fn arg arg)))
+
+((same-arg-twice word) 'hello)
+
+(define (flip fn)
+  (lambda (a b) (fn b a)))
+
+((flip -) 5 8)
+
+(define (roots a b c)
+  ((lambda (discriminant)
+     (se (/ (+ (- b) discriminant) (* 2 a))
+         (/ (- (- b) discriminant) (* 2 a))))
+   (sqrt (- (* b b) (* 4 a c)))))
+
+(define (backwards wd) (accumulate (lambda (a b) (word b a)) wd))
+
+(backwards 'yesterday)
+(every backwards '(i saw her standing there))
+
+(define keep-h (keeper 'h))
+
+(define (keeper letter)
+  (lambda (sent)
+    (keep (lambda (wd) (member? letter wd)) sent)))
+
