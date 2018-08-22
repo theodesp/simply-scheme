@@ -428,10 +428,7 @@
   (lambda (x)
     (if (eq? (check x) #t)
         (f x)
-        #f
-        )
-    )
-  )
+        #f)))
 
 (define safe-sqrt (type-check sqrt number?))
 (safe-sqrt 16)
@@ -451,9 +448,7 @@
 
 (define (aplize f)
   (lambda (x)
-    (accumulate (lambda (a b) f a b) x)
-    )
-  )
+    (accumulate (lambda (a b) f a b) x)))
 
 (define apl-sqrt (aplize sqrt))
 (apl-sqrt 36)
@@ -467,7 +462,65 @@
                        (if (eq? (f x) #t)
                            x
                            '()
-                           )) sent))
-  )
+                           )) sent)))
 
 (keep even? '12345)
+
+;Write a procedure card-val that takes a single card as its argument and returns the value of that card.
+;
+;> (card-val 'cq)
+;2
+;
+;> (card-val 's7)
+;0
+;
+;> (card-val 'ha)
+;4
+
+(define (card-val card)
+  (case (butfirst card)
+    ((a) 4)
+    ((k) 3)
+    ((q) 2)
+    ((j) 1)
+    (else 0)))
+
+;Write a procedure high-card-points that takes a hand as its argument and returns the total number of points from high cards in the hand. (This procedure does not count distribution points.)
+
+(define (high-card-points cards)
+  (accumulate + (every card-val cards)))
+
+;Write a procedure count-suit that takes a suit and a hand as arguments and returns the number of cards in the hand with the given suit.
+
+
+(define (count-suit suit cards)
+  (count (filter (lambda (card) (equal? (first card) suit)) cards)))
+
+;Write a procedure suit-counts that takes a hand as its argument and returns a sentence containing the number of spades, the number of hearts, the number of clubs, and the number of diamonds in the hand.
+
+(define (suit-counts cards)
+  (let ((hearts (count-suit 'h cards))
+        (diamonds (count-suit 'd cards))
+        (clubs (count-suit 'c cards))
+        (spades (count-suit 's cards)))
+     (se spades hearts clubs diamonds)))
+
+;Write suit-dist-points that takes a number as its argument, interpreting it as the number of cards in a suit. The procedure should return the number of distribution points your hand gets for having that number of cards in a particular suit.
+
+(define (suit-dist-points count)
+  (case count
+    ((1) 2)
+    ((2) 1)
+    ((0) 3)
+    (else 0)))
+
+;Write hand-dist-points, which takes a hand as its argument and returns the number of distribution points the hand is worth.
+
+(define (hand-dist-points cards)
+  (accumulate + (every suit-dist-points (suit-counts cards))))
+
+;Write a procedure bridge-val that takes a hand as its argument and returns the total number of points that the hand is worth.
+
+(define (bridge-val cards)
+  (+ (hand-dist-points cards) (high-card-points cards))
+
