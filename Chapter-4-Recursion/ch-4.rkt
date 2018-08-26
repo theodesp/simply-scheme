@@ -1,13 +1,11 @@
 #lang racket
 (require (planet dyoo/simply-scheme:2:2))
 
-
 (define (downup wd)
   (if (= (count wd) 1)
       (se wd)
       (se wd (downup (bl wd)) wd)))
 
-(downup 'banana)
 
 (define (pigl wd)
   (if (member? (first wd) 'aeiou)
