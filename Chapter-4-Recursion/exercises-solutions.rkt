@@ -129,3 +129,137 @@
       (se item (copies (- howmany 1) item))))
 
 (copies 8 'spam)
+
+;12.1  Here is a definition of a procedure that returns the sum of the numbers in its argument sentence:
+;
+;(define (addup nums)
+;  (if (empty? (bf nums))
+;      (first nums)
+;      (+ (first nums) (addup (bf nums)))))
+;Although this works, it could be simplified by changing the base case. Do that.
+
+(define (addup nums)
+  (if (empty? nums)
+      0
+      (+ (first nums) (addup (bf nums)))))
+
+(addup '123)
+
+;
+;12.2  Fix the bug in the following definition:
+;
+;(define (acronym sent)                       ;; wrong
+;  (if (= (count sent) 1)
+;      (first sent)
+;      (word (first (first sent))
+;	    (acronym (bf sent)))))
+
+(define (acronym sent)                       ;; wrong
+  (if (= (count sent) 1)
+      (first (first sent))
+      (word (first (first sent))
+	    (acronym (bf sent)))))
+
+(acronym '(REDUCE IS KEllly))
+
+;12.3  Can we reduce the factorial base case argument from 0 to -1? If so, show the resulting procedure. If not, why not?
+;
+; Answer : Nope
+;12.4  Here's the definition of a function f:
+;
+;math display
+;Implement f as a Scheme procedure. What does f do?
+;
+;Real Exercises
+;Solve all of the following problems with recursive procedures. If you've read Part III, do not use any higher-order functions such as every, keep, or accumulate.
+;
+;12.5  [8.8] Write an exaggerate procedure which exaggerates sentences:
+;
+;> (exaggerate '(i ate 3 potstickers))
+;(I ATE 6 POTSTICKERS)
+;
+;> (exaggerate '(the chow fun is good here))
+;(THE CHOW FUN IS GREAT HERE)
+;It should double all the numbers in the sentence, and it should replace "good" with "great," "bad" with "terrible," and anything else you can think of.
+;
+
+(define (exaggerate-word wd)
+  (cond ((number? wd) (* wd 2))
+        ((member? wd '(good nice bad terrible)) 'great)
+        (else wd)
+        ))
+
+(define (exaggerate sent)
+  (if (empty? sent)
+      '()
+      (se (exaggerate-word (first sent)) (exaggerate (bf sent)))
+      ))
+
+(exaggerate '(the chow fun is good here))
+(exaggerate '(i ate 3 potstickers))
+
+;12.6  [8.11] Write a GPA procedure. It should take a sentence of grades as its argument and return the corresponding grade point average:
+;
+;> (gpa '(A A+ B+ B))
+;3.67
+;Hint: write a helper procedure base-grade that takes a grade as argument and returns 0, 1, 2, 3, or 4, and another helper procedure grade-modifier that returns -.33, 0, or .33, depending on whether the Hint: write a helper procedure base-grade that takes a grade as argument and returns 0, 1, 2, 3, or 4, and another helper procedure grade-modifier that returns -.33, 0, or .33, depending on whether the grade has a minus, a plus, or neither.zero one two three four five six seven eight nine)))
+
+;12.8  Write a procedure numbers that takes a sentence as its argument and returns another sentence containing only the numbers in the argument:
+;
+;> (numbers '(76 trombones and 110 cornets))
+;(76 110)
+
+(define (filter-number wd)
+  (cond ((number? wd) wd)
+        (else '())
+        ))
+
+(define (numbers sent)
+  (if (empty? sent)
+      '()
+      (se (filter-number (first sent)) (numbers (bf sent)))
+      ))
+
+(numbers '(76 trombones and 110 cornets))
+
+;12.9  Write a procedure real-words that takes a sentence as argument and returns all the "real" words of the sentence, using the same rule as the real-word? procedure from Chapter 1.
+;
+;12.10  Write a procedure remove that takes a word and a sentence as arguments and returns the same sentence, but with all copies of the given word removed:
+;
+;> (remove 'the '(the song love of the loved by the beatles))
+;(SONG LOVE OF LOVED BY BEATLES)
+
+(define (filter-word a b)
+ (if (equal? a b) '()
+     a))
+
+(define (remove sent toRemove)
+  (if (empty? sent)
+      '()
+      (se (filter-word (first sent) toRemove) (remove (bf sent) toRemove))
+      ))
+
+(remove '(76 trombones and 110 cornets) 'trombones )
+
+;12.11  Write the procedure count, which returns the number of words in a sentence or the number of letters in a word.
+
+;
+;12.12  Write a procedure arabic which converts Roman numerals into Arabic numerals:
+;
+;> (arabic 'MCMLXXI)
+;1971
+;
+;> (arabic 'MLXVI)
+;1066
+;You will probably find the roman-value procedure from Chapter 6 helpful. Don't forget that a letter can reduce the overall value if the letter that comes after it has a larger value, such as the C in MCM.
+;
+;12.13  Write a new version of the describe-time procedure from Exercise . Instead of returning a decimal number, it should behave like this:
+;
+;> (describe-time 22222)
+;(6 HOURS 10 MINUTES 22 SECONDS)
+;
+;> (describe-time 4967189641)
+;(1 CENTURIES 57 YEARS 20 WEEKS 6 DAYS 8 HOURS 54 MINUTES 1 SECONDS)
+;Can you make the program smart about saying 1 CENTURY instead of 1 CENTURIES?
+;
+

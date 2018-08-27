@@ -25,3 +25,21 @@
       '()
       (se (first-two wd)
 	  (letter-pairs (bf wd)))))
+
+(define (reverse wd)
+  (if (= (count wd) 1)
+      wd
+      (word (last wd)
+	    (reverse (bl wd)))))
+
+(define (factorial n)
+  (if (= n 1)
+      1
+      (* n (factorial (- n 1)))))
+
+(define (evens sent)                         ;; best version
+  (if (<= (count sent) 1)
+      '()
+      (se (first (bf sent))
+	  (evens (bf (bf sent))))))
+
