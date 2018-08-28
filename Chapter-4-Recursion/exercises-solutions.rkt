@@ -263,3 +263,275 @@
 ;Can you make the program smart about saying 1 CENTURY instead of 1 CENTURIES?
 ;
 
+;Exercises
+;Classify each of these problems as a pattern (every, keep, or accumulate), if possible, and then write the
+;procedure recursively. In some cases we've given an example of invoking the procedure we want you to write, instead
+;of describing it.
+;14.1
+;> (remove–once 'morning '(good morning good morning))
+;(GOOD GOOD MORNING)
+
+; Answer: Keep
+
+
+;(It's okay if your solution removes the other MORNING instead, as long as it removes only one of them.)
+;14.2
+;> (up 'town)
+;(T TO TOW TOWN)
+
+; Answer: accumulate
+
+
+;14.3
+;> (remdup '(ob la di ob la da)) ;; remove duplicates
+;(OB LA DI DA)
+;(It's okay if your procedure returns (DI OB LA DA) instead, as long as it removes all but one instance of each
+;duplicated word.)
+
+; Answer: Keep
+
+;14.4
+;> (odds '(i lost my little girl))
+;(I MY GIRL)
+
+; Answer: Keep
+
+;14.5 [8.7] Write a procedure letter–count that takes a sentence as its argument and returns the total number of
+;letters in the sentence:
+;> (letter–count '(fixing a hole))
+
+(define (count-letters wd)
+  (count wd)
+  )
+
+(define (letter-count sent)
+  (if (empty? sent)
+      0
+      (+ (count-letters (first sent)) (letter-count (bf sent)))))
+
+(letter-count '(fixing a hole))
+
+;11
+;14.6 Write member?.
+
+(define (member? a lst)
+  (if (empty? lst)
+      #f
+      (if (equal? a (first lst))
+          #t
+          (member? a (bf lst)))))
+
+(member? 'b '(fixing a hole) )
+
+;Page 230
+;14.7 Write differences, which takes a sentence of numbers as its argument and returns a sentence containing the
+;differences between adjacent elements. (The length of the returned sentence is one less than that of the argument.)
+;> (differences '(4 23 9 87 6 12))
+;(19 –14 78 –81 6)
+
+(define (differences lst)
+  (if (empty? lst)
+      '()
+      (if (= (count lst) 1)
+          lst
+          (se (- (item 2 lst) (first lst)) (differences (bf lst))))))
+     
+(differences '(4 23 9 87 6 12))
+
+;14.8 Write expand, which takes a sentence as its argument. It returns a sentence similar to the argument, except that
+;if a number appears in the argument, then the return value contains that many copies of the following word:
+;> (expand '(4 calling birds 3 french hens))
+;(CALLING CALLING CALLING CALLING BIRDS FRENCH FRENCH FRENCH HENS)
+;> (expand '(the 7 samurai))
+;(THE SAMURAI SAMURAI SAMURAI SAMURAI SAMURAI SAMURAI SAMURAI)
+;
+
+(define (print-copies howmany wd)
+  (if (= howmany 1)
+      wd
+      (se wd  (print-copies (- howmany 1) wd))))
+
+(define (expand args)
+  (if (empty? args)
+      '()
+      (if (= (count args) 1)
+          args
+          (if (number? (first args))
+              (se (print-copies (first args) (item 2 args)) (expand (bf (bf args))))
+              (se (first args) (expand (bf args)))))))
+              
+(expand '(the 7 samurai))
+
+
+;14.9 Write a procedure called location that takes two arguments, a word and a sentence. It should return a number
+;indicating where in the sentence that word can be found. If the word isn't in the sentence, return #f. If the word
+;appears more than once, return the location of the first appearance.
+;> (location 'me '(you never give me your money))
+;4
+
+(define (location wd sent)
+  (let location-iter ([index 0] [wd wd] [sent sent])
+    (if (empty? sent)
+        #f
+        (if (equal? (first sent) wd)
+            (+ index 1)
+            (location-iter (+ index 1) wd (bf sent))))))
+            
+(location 'me '(you never give me your money))
+
+;14.10 Write the procedure count–adjacent–duplicates that takes a sentence as an argument and returns the
+;number of words in the sentence that are immediately followed by the same word:
+;> (count–adjacent–duplicates '(y a b b a d a b b a d o o))
+;3
+;> (count–adjacent–duplicates '(yeah yeah yeah))
+;2
+
+(define (count–adjacent–duplicates sent)
+  (let count–adjacent–duplicates-iter ([n 0] [sent sent])
+    (if (or (empty? sent) (= (count sent) 1))
+        n
+        (if (equal? (first sent) (item 2 sent))
+            (count–adjacent–duplicates-iter (+ 1 n) (bf sent))
+            (count–adjacent–duplicates-iter n (bf sent))))))
+
+
+(count–adjacent–duplicates '(y a b b a d a b b a d o o))
+(count–adjacent–duplicates '(yeah yeah yeah))
+
+;14.11 Write the procedure remove–adjacent–duplicates that takes a sentence as argument and returns the
+;same sentence but with any word that's immediately followed by the same word removed:
+;Page 231
+;> (remove–adjacent–duplicates '(y a b b a d a b b a d o o))
+;(Y A B A D A B A D O)
+;> (remove–adjacent–duplicates '(yeah yeah yeah))
+;(YEAH)
+
+(define (remove–adjacent–duplicates sent)
+   (if (or (empty? sent) (= (count sent) 1))
+       sent
+        (if (equal? (first sent) (item 2 sent))
+            (se (remove–adjacent–duplicates (bf sent)))
+            (se (first sent) (remove–adjacent–duplicates (bf sent))))))
+         
+(remove–adjacent–duplicates '(y a b b a d a b b a d o o))
+(remove–adjacent–duplicates '(yeah yeah yeah))
+
+;14.12 Write a procedure progressive–squares? that takes a sentence of numbers as its argument. It should
+;return #t if each number (other than the first) is the square of the number before it:
+;> (progressive–squares? '(3 9 81 6561))
+;#T
+;> (progressive–squares? '(25 36 49 64))
+;#F
+
+(define (square x) (* x x))
+
+(define (progressive–squares? sent)
+   (if (or (empty? sent) (= (count sent) 1))
+       #t
+        (if (equal? (square (first sent)) (item 2 sent))
+            (and #t (progressive–squares? (bf sent)))
+            #f)))
+
+(progressive–squares? '(3 9 81 6561))
+(progressive–squares? '(25 36 49 64))
+
+;14.13 What does the pigl procedure from Chapter 11 do if you invoke it with a word like "frzzmlpt" that has no
+;vowels? Fix it so that it returns "frzzmlptay."
+
+;14.14 Write a predicate same–shape? that takes two sentences as arguments. It should return #t if two conditions
+;are met: The two sentences must have the same number of words, and each word of the first sentence must have the
+;same number of letters as the word in the corresponding position in the second sentence.
+;> (same–shape? '(the fool on the hill) '(you like me too much))
+;#T
+;> (same–shape? '(the fool on the hill) '(and your bird can sing))
+;#F
+
+(define (same–shape? a b)
+   (if (not (equal? (count a) (count b)))
+       #f
+       (if (and (empty? a) (empty? b))
+           #t
+           (if (not (equal? (count (first a)) (count (first b))))
+               #f
+               (same–shape? (bf a) (bf b))))))
+
+(same–shape? '(the fool on the hill) '(you like me too much))
+(same–shape? '(the fool on the hill) '(and your bird can sing))
+
+;14.15 Write merge, a procedure that takes two sentences of numbers as arguments. Each sentence must consist of
+;numbers in increasing order. Merge should return a single sentence containing all of the numbers, in order. (We'll use
+;this in the next chapter as part of a sorting algorithm.)
+;> (merge '(4 7 18 40 99) '(3 6 9 12 24 36 50))
+;(3 4 6 7 9 12 18 24 36 40 50 99)
+;
+;14.16 Write a procedure syllables that takes a word as its argument and returns the number of syllables in the
+;word, counted according to the following rule: the number of syllables is the number of vowels, except that a group of
+;consecutive vowels counts as one. For example, in the word "soaring," the group "oa" represents one syllable and the
+;vowel "i" represents a second one.
+;Be sure to choose test cases that expose likely failures of your procedure. For example, what if the word ends with a
+;vowel? What if it ends with two vowels in a row? What if it has more than two consecutive vowels?
+;(Of course this rule isn't good enough. It doesn't deal with things like silent "e"s that don't create a syllable ("like"),
+;consecutive vowels that don't form a diphthong ("cooperate"), letters like "y" that are vowels only sometimes, etc. If
+;you get bored, see whether you can teach the program to recognize some of these special cases.)
+;
+;Project:
+;Spelling Names of Huge Numbers
+;Write a procedure number–name that takes a positive integer argument and returns a sentence containing that
+;number spelled out in words:
+;> (number–name 5513345)
+;(FIVE MILLION FIVE HUNDRED THIRTEEN THOUSAND THREE HUNDRED FORTY FIVE)
+;> (number–name (factorial 20))
+;(TWO QUINTILLION FOUR HUNDRED THIRTY TWO QUADRILLION NINE HUNDRED TWO
+; TRILLION EIGHT BILLION ONE HUNDRED SEVENTY SIX MILLION SIX HUNDRED
+; FORTY THOUSAND)
+;There are some special cases you will need to consider:
+;• Numbers in which some particular digit is zero
+;• Numbers like 1,000,529 in which an entire group of three digits is zero.
+;• Numbers in the teens.
+;Here are two hints. First, split the number into groups of three digits, going from right to left. Also, use the sentence
+;'(thousand million billion trillion quadrillion quintillion
+; sextillion septillion octillion nonillion decillion)
+;You can write this bottom-up or top-down. To work bottom-up, pick a subtask and get that working before you tackle
+;the overall structure of the problem. For example, write a procedure that returns the word FIFTEEN given the
+;argument 15.
+;To work top-down, start by writing number–name, freely assuming the existence of whatever helper procedures you
+;like. You can begin debugging by writing stub procedures that fit into the overall program but don't really do their job
+;correctly. For example, as an intermediate stage you might end up with a program that works like this:
+;> (number–name 1428425) ;; intermediate version
+;(1 MILLION 428 THOUSAND 425)
+
+(define multipliers '("" thousand million billion trillion quadrillion quintillion sextillion septillion octillion nonillion decillion))
+(define before20 '(one two three four five six seven eight nine ten elven twelve thirteen forteen fifteen sixteen seventeen eighteen nineteen))
+(define decades '(ten twenty thirty fourty fifty sixty seventy eighty ninety))
+
+(define (spell-before20 num)
+  (if (eq? num 0)
+      '()
+  (item num before20)))
+
+(define (spell-before100 num)
+  (if (eq? num 0)
+      '()
+      (if (< num 20)
+          (spell-before20 num)
+          (se (item (first num) decades) (item (bf num) before20)))))
+
+(define (spell-group num multiplier)
+  (if (= (remainder num 100) 0)
+      (se (spell-before20 (first num)) 'hundred multiplier)
+      (if (> num 100)
+          (se (spell-before20 (first num)) 'hundred (spell-before100 (bf num)) multiplier)
+          (se (spell-before100 num) multiplier))))
+
+(define (spell-number num)
+  (let spell-number ([num num] [mult '()])
+    (if (< num 1000)
+      (spell-group num mult)
+      (se
+       (spell-number (quotient num 1000) (item (+ (if (empty? mult) 1 (+ (index-of multipliers mult) 1)) 1) multipliers))
+       (spell-group (remainder num 1000) mult)
+  ))))
+  
+
+(spell-number 11900191231233331)
+

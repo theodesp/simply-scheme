@@ -43,3 +43,17 @@
       (se (first (bf sent))
 	  (evens (bf (bf sent))))))
 
+(define (double wd) (word wd wd))
+(trace double)
+
+(double (double (double 'yum)))
+(untrace double)
+
+(define (every–nth n sent)
+ (every–nth–helper n n sent))
+(define (every–nth–helper interval remaining sent)
+ (cond ((empty? sent) '())
+ ((= remaining 1)
+ (se (first sent)
+ (every–nth–helper interval interval (bf sent))))
+ (else (every–nth–helper interval (– remaining 1) (bf sent)))))
