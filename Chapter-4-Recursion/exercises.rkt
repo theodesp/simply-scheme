@@ -257,3 +257,112 @@
 ;correctly. For example, as an intermediate stage you might end up with a program that works like this:
 ;> (number–name 1428425) ;; intermediate version
 ;(1 MILLION 428 THOUSAND 425)
+
+
+;15.1 Write a procedure to–binary:
+;> (to–binary 9)
+;1001
+;> (to–binary 23)
+;10111
+;15.2 A "palindrome" is a sentence that reads the same backward as forward. Write a predicate palindrome? that
+;takes a sentence as argument and decides whether it is a palindrome. For example:
+;> (palindrome? '(flee to me remote elf))
+;#T
+;> (palindrome? '(flee to me remote control))
+;#F
+;Do not reverse any words or sentences in your solution.
+;15.3 Write a procedure substrings that takes a word as its argument. It should return a sentence containing all of
+;the substrings of the argument. A substring is a subset whose letters come consecutively in the original word. For
+;example, the word bat is a subset, but not a substring, of brat.
+;15.4 Write a predicate procedure substring? that takes two words as arguments and returns #t if and only if the
+;first word is a substring of the second. (See Exercise 15.3 for the definition of a substring.)
+;Be careful about cases in which you encounter a "false start," like this:
+;> (substring? 'ssip 'mississippi)
+;#T
+;and also about subsets that don't appear as consecutive letters in the second word:
+;> (substring? 'misip 'mississippi)
+;#F
+;Page 244
+;15.5 Suppose you have a phone number, such as 223-5766, and you'd like to figure out a clever way to spell it in
+;letters for your friends to remember. Each digit corresponds to three possible letters. For example, the digit 2
+;corresponds to the letters A, B, and C. Write a procedure that takes a number as argument and returns a sentence of all
+;the possible spellings:
+;> (phone–spell 2235766)
+;(AADJPMM AADJPMN ... CCFLSOO)
+;(We're not showing you all 2187 words in this sentence.) You may assume there are no zeros or ones in the number,
+;since those don't have letters.
+;Hint: This problem has a lot in common with the subsets example.
+;15.6 Let's say a gladiator kills a roach. If we want to talk about the roach, we say "the roach the gladiator killed." But if
+;we want to talk about the gladiator, we say "the gladiator that killed the roach."
+;People are pretty good at understanding even rather long sentences as long as they're straightforward: "This is the
+;farmer who kept the cock that waked the priest that married the man that kissed the maiden that milked the cow that
+;tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built." But even a
+;short nested sentence is confusing: "This is the rat the cat the dog worried killed." Which rat was that?
+;Write a procedure unscramble that takes a nested sentence as argument and returns a straightforward sentence
+;about the same cast of characters:
+;> (unscramble '(this is the roach the gladiator killed))
+;(THIS IS THE GLADIATOR THAT KILLED THE ROACH)
+;> (unscramble '(this is the rat the cat the dog the boy the
+; girl saw owned chased bit))
+;(THIS IS THE GIRL THAT SAW THE BOY THAT OWNED THE DOG THAT
+; CHASED THE CAT THAT BIT THE RAT)
+;You may assume that the argument has exactly the structure of these examples, with no special cases like "that lay in
+;the house" or "that Jack built."
+;
+;Project:
+;Scoring Poker Hands
+;The idea of this project is to invent a procedure poker–value that works like this:
+;> (poker–value '(h4 s4 c6 s6 c4))
+;(FULL HOUSE – FOURS OVER SIXES)
+;> (poker–value '(h7 s3 c5 c4 d6))
+;(SEVEN–HIGH STRAIGHT)
+;> (poker–value '(dq d10 dj da dk))
+;(ROYAL FLUSH – DIAMONDS)
+;> (poker–value '(da d6 d3 c9 h6))
+;(PAIR OF SIXES)
+;As you can see, we are representing cards and hands just as in the Bridge project, except that poker hands have only
+;five cards.*
+;Here are the various kinds of poker hands, in decreasing order of value:
+;• Royal flush: ten, jack, queen, king, and ace, all of the same suit
+;• Straight flush: five cards of sequential rank, all of the same suit
+;• Four of a kind: four cards of the same rank
+;• Full house: three cards of the same rank, and two of a second rank
+;• Flush: five cards of the same suit, not sequential rank
+;• Straight: five cards of sequential rank, not all of the same suit
+;• Three of a kind: three cards of the same rank, no other matches
+;• Two pair: two pairs of cards, of two different ranks
+;• Pair: two cards of the same rank, no other matches
+;• Nothing: none of the above
+;An ace can be the lowest card of a straight (ace, 2, 3, 4, 5) or the highest card of a straight (ten, jack, queen, king, ace),
+;but a straight can't ''wrap around"; a hand with queen, king, ace, 2, 3 would be worthless (unless it's a flush).
+;Notice that most of the hand categories are either entirely about the ranks of the cards (pairs, straight, full house, etc.)
+;or entirely about the suits (flush). It's a good idea to begin your program by separating the rank information and the
+;suit information. To check for a straight flush or royal flush, you'll have to consider both kinds of information.
+;In what form do you want the suit information? Really, all you need is a true or false value indicating whether or not
+;the hand is a flush, because there aren't any poker categories like "three of one suit and two of another."
+;What about ranks? There are two kinds of hand categories involving ranks: the ones about equal ranks (pairs, full
+;house) and the ones about sequential ranks (straight). You might therefore want the rank information in two forms. A
+;sentence containing all of the ranks in the hand, in sorted order, will make it easier to find a straight. (You still have to
+;be careful about aces.)
+;For the equal-rank categories, what you want is some data structure that will let you ask questions like "are there three
+;cards of the same rank in this hand?" We ended up using a representation like this:
+;> (compute–ranks '(q 3 4 3 4))
+;(ONE Q TWO 3 TWO 4)
+;One slightly tricky aspect of this solution is that we spelled out the numbers of cards, one to four, instead of using
+;the more obvious (1 Q 2 3 2 4). The reason, as you can probably tell just by looking at the latter version, is that
+;it would lead to confusion between the names of the ranks, most of which are digits, and the numbers of occurrences,
+;which are also digits. More specifically, by spelling out the numbers of occurrences, we can use member? to ask
+;easily if there is a three-of-a-kind rank in the hand.
+;You may find it easier to begin by writing a version that returns only the name of a category, such as
+;three of a kind, and only after you get that to work, revise it to give more specific results such as
+;three sixes.
+;Page 247
+;Extra Work for Hotshots
+;In some versions of poker, each player gets seven cards and can choose any five of the seven to make a hand. How
+;would it change your program if the argument were a sentence of seven cards? (For example, in five-card poker there
+;is only one possible category for a hand, but in seven-card you have to pick the best category that can be made from
+;your cards.) Fix your program so that it works for both five-card and seven-card hands.
+;Another possible modification to the program is to allow for playing with "wild" cards. If you play with "threes wild,"
+;it means that if there is a three in your hand you're allowed to pretend it's whatever card you like. For this modification,
+;your program will require a second argument indicating which cards are wild. (When you play with wild cards, there's
+;the possibility of having five of a kind. This beats a straight flush.)
