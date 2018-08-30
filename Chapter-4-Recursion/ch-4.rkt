@@ -113,3 +113,19 @@
  (let ((smaller (subsets (bf wd))))
  (se smaller
  (prepend–every (first wd) smaller)))))
+
+
+(define (match? pattern sent) ;; second version: ! and ?
+ (cond ((empty? pattern)
+ (empty? sent))
+ ((equal? (first pattern) '?)
+ (if (empty? sent)
+ (match? (bf pattern) '())
+ (or (match? (bf pattern) (bf sent))
+ (match? (bf pattern) sent))))
+ ((empty? sent) #f)
+ ((equal? (first pattern) '!)
+ (match? (bf pattern) (bf sent)))
+ ((equal? (first pattern) (first sent))
+ (match? (bf pattern) (bf sent)))
+ (else #f)))
