@@ -1,35 +1,96 @@
-;#lang racket
-;(require (planet dyoo/simply-scheme:2:2))
+#lang racket
+(require (planet dyoo/simply-scheme:2:2))
 ;
 ;17.1 What will Scheme print in response to each of the following expressions? Try to figure it out in your head before
 ;you try it on the computer.
 ;> (car '(Rod Chris Colin Hugh Paul))
+
+; Answer: Rod
+
 ;> (cadr '(Rod Chris Colin Hugh Paul))
+
+; Answer: Chris
+
 ;> (cdr '(Rod Chris Colin Hugh Paul))
+
+; Answer: '(Chris Colin Hugh Paul)
+
 ;> (car 'Rod)
+
+; Throw error
+
 ;> (cons '(Rod Argent) '(Chris White))
+
+; Answer: '((Rod Argent) Chris White)
+
 ;> (append '(Rod Argent) '(Chris White))
+
+; Answer: '(Rod Argent Chris White)
+
+
 ;> (list '(Rod Argent) '(Chris White))
+
+; Answer: '((Rod Argent) (Chris White))
+
 ;> (caadr '((Rod Argent) (Chris White)
 ; (Colin Blunstone) (Hugh Grundy) (Paul Atkinson)))
+
+; Answer: 'Chris
+
 ;Page 300
 ;> (assoc 'Colin '((Rod Argent) (Chris White)
 ; (Colin Blunstone) (Hugh Grundy) (Paul Atkinson)))
+
+; Answer: '(Colin Blunstone)
+
 ;> (assoc 'Argent '((Rod Argent) (Chris White)
 ; (Colin Blunstone) (Hugh Grundy) (Paul Atkinson)))
+
+; Answer: #f
+
 ;17.2 For each of the following examples, write a procedure of two arguments that, when applied to the sample
 ;arguments, returns the sample result. Your procedures may not include any quoted data
 ;
 ;> (f1 '(a b c) '(d e f))
 ;((B C D))
+
+(define (f1 lst1 lst2)
+  (cons (append (cdr lst1) (list (car lst2))) '()))
+
+(f1 '(a b c) '(d e f))
+
 ;> (f2 '(a b c) '(d e f))
 ;((B C) E)
+
+(define (f2 lst1 lst2)
+   (cons (cdr lst1)
+         (list (cadr lst2))))
+
+(f2 '(a b c) '(d e f))
+
 ;> (f3 '(a b c) '(d e f))
 ;(A B C A B C)
+
+(define (f3 lst1 lst2)
+   (append lst1 lst1))
+
+(f3 '(a b c) '(d e f))
+
 ;> (f4 '(a b c) '(d e f))
 ;((A D) (B C E F))
+
+(define (f4 lst1 lst2)
+   (cons (list (car lst1) (car lst2))
+         (list (append (cdr lst1)  (cdr lst2)))))
+
+(f4 '(a b c) '(d e f))
+
 ;17.3 Describe the value returned by this invocation of map:
 ;> (map (lambda (x) (lambda (y) (+ x y))) '(1 2 3 4))
+
+; Answer: A list of procedures that accept 1 parameter and when invoked it will
+; print the accociated number + y in that list
+
 ;Real Exercises
 ;17.4 Describe the result of calling the following procedure with a list as its argument. (See if you can figure it out
 ;before you try it.)
