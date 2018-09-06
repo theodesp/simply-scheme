@@ -249,3 +249,84 @@
 
 (valid–infix? '(3 * (5 - 2)))
 (valid–infix? '(4 + 3 * (5 2)))
+
+;18.1  What does
+;
+;((SAN FRANCISCO))
+;mean in the printout of world-tree? Why two sets of parentheses?
+;
+; Answer: It means that the child leaf is a list when we defined it
+
+;18.2  Suppose we change the definition of the tree constructor so that it uses list instead of cons:
+;
+;(define (make-node datum children)
+;  (list datum children))
+
+;How do we have to change the selectors so that everything still works?
+;
+;Answer you will have to use cadr  in children node
+
+;18.3  Write depth, a procedure that takes a tree as argument and returns the largest number of nodes connected through parent-child links. That is, a leaf node has depth 1; a tree in which all the children of the root node are leaves has depth 2. Our world tree has depth 4 (because the longest path from the root to a leaf is, for example, world, country, state, city).
+;
+
+(define (make-node datum children)
+  (cons datum children))
+
+(define (datum node)
+  (car node))
+
+(define (children node)
+  (cdr node))
+
+
+;18.4  Write count-nodes, a procedure that takes a tree as argument and returns the total number of nodes in the tree. (Earlier we counted the number of leaf nodes.)
+;
+
+(define (leaf? node)
+  (empty? (cdr node)))
+
+(define (node? node)
+  (not (leaf? node)))
+
+(define (count-nodes tree)
+  (if (node? tree)
+      1
+      (count-nodes-in-forest (children tree))))
+
+(define (count-nodes-in-forest forest)
+  (if (null? forest)
+      0
+      (+ (count-nodes (car forest))
+         (count-nodes-in-forest (cdr forest)))))
+
+;18.5  Write prune, a procedure that takes a tree as argument and returns a copy of the tree, but with all the leaf nodes of the original tree removed. (If the argument to prune is a one-node tree, in which the root node has no children, then prune should return #f because the result of removing the root node wouldn't be a tree.)
+
+(define (prune tree)
+  (if (node? tree)
+      (make-node (datum tree) (prune-leafs-in-forest (children tree)))
+      (prune-leafs-in-forest (children tree))))
+
+(define (prune-leafs-in-forest forest)
+  (if (null? forest)
+      '()
+      (make-node (prune (car forest))
+                 (prune-leafs-in-forest (children forest)))))
+          
+(prune  '(world (italy (venezia) (riomaggiore) (firenze) (roma))))
+
+;
+;18.6  Write a program parse-scheme that parses a Scheme arithmetic expression into the same kind of tree that parse produces for infix expressions. Assume that all procedure invocations in the Scheme expression have two arguments.
+;
+;The resulting tree should be a valid argument to compute:
+;
+;> (compute (parse-scheme '(* (+ 4 3) 2)))
+;14
+
+(define (parse-scheme expr)
+  (parse-helper expr '() '()))
+;(You can solve this problem without the restriction to two-argument invocations if you rewrite compute so that it doesn't assume every branch node has two children.)
+
+(define (compute tree)
+  (if (number? (datum tree))
+      (datum tree)
+      (foldl (function-named-by (datum tree)) 0 (map car (children tree)))))
