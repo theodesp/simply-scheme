@@ -246,3 +246,22 @@
 	((equal? oper '*) *)
 	((equal? oper '/) /)
 	(else (error "no such operator as" oper))))
+
+
+(define (area shape r) (* shape r r))
+(define square 1)
+(define circle pi)
+(define sphere (* 4 pi))
+(define hexagon (* (sqrt 3) 1.5))
+
+(define (accumulate combiner stuff)
+  (cond ((not (empty? stuff)) (real-accumulate combiner stuff))
+        ((member combiner (list + * word se append))
+         (combiner))
+        (else (error
+               "Can't accumulate empty input with that combiner"))))
+
+(define (real-accumulate combiner stuff)
+  (if (empty? (bf stuff))
+      (first stuff)
+      (combiner (first stuff) (real-accumulate combiner (bf stuff)))))

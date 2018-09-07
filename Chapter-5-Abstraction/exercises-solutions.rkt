@@ -330,3 +330,174 @@
   (if (number? (datum tree))
       (datum tree)
       (foldl (function-named-by (datum tree)) 0 (map car (children tree)))))
+
+;19.1  What happens if you say the following?
+;
+;(every cdr '((john lennon) (paul mccartney)
+;	     (george harrison) (ringo starr)))
+
+; Answer: Will pick up the surname of each list item
+
+;How is this different from using map, and why? How about cadr instead of cdr?
+;
+
+; Answer: Map will map each as a list item
+
+
+;Real Exercises
+;19.2  Write keep. Don't forget that keep has to return a sentence if its second argument is a sentence, and a word if its second argument is a word.
+;
+;(Hint: it might be useful to write a combine procedure that uses either word or sentence depending on the types of its arguments.)
+;
+
+(define (keep fn lst)
+  (cond ((empty? lst) lst)
+        (else (if (eq? (fn (first lst)) #t)
+            (combine lst (keep fn (bf lst)))
+            (keep fn (bf lst))))))
+
+(define (combine lst rest)
+  (if (word? lst)
+      (word (first lst) rest)
+      (se (first lst) rest)))
+
+(keep odd? '12345)
+
+;19.3  Write the three-argument version of accumulate that we described.
+;
+;> (three-arg-accumulate + 0 '(4 5 6))
+;15
+;
+;> (three-arg-accumulate + 0 '())
+;0
+;
+;> (three-arg-accumulate cons '() '(a b c d e))
+;(A B C D E)
+
+(define (three-arg-accumulate fn curr lst)
+  (cond ((empty? lst) curr)
+        (else (fn (first lst) (three-arg-accumulate fn curr (cdr lst))))))
+
+(three-arg-accumulate + 0 '(4 5 6))
+(three-arg-accumulate cons '() '(a b c d e))
+
+
+;19.4  Our accumulate combines elements from right to left. That is,
+;
+;(accumulate - '(2 3 4 5))
+;computes 2-(3-(4-5)). Write left-accumulate, which will compute ((2-3)-4)-5 instead. (The result will be the same for an operation such as +, for which grouping order doesn't matter, but will be computes 2-(3-(4-5)). Write left-accumulate, which will compute ((2-3)-4)-5 instead. (The result will be the same for an operation such as +, for which grouping order doesn't matter, but will be different for -.)ts. The predicate must accept two words as its arguments. Your procedure should return #t if the argument predicate will return true for any two adjacent words in the sentence:
+;
+;> (true-for-any-pair? equal? '(a b c b a))
+;#F
+;
+;> (true-for-any-pair? equal? '(a b c c d))
+;#T
+;
+;> (true-for-any-pair? < '(20 16 5 8 6))      ;; 5 is less than 8
+;#T
+
+(define (true-for-any-pair? fn lst)
+  (cond ((empty? (cdr lst)) #t)
+        (else (or (true-for-all-pairs? fn (list (car lst) (cadr lst))) (true-for-any-pair? fn (cdr lst))))))
+
+
+(true-for-all-pairs? equal? '(a b c d ))
+(true-for-any-pair? < '(20 16 5 8 6))
+
+;19.7  Write a procedure true-for-all-pairs? that takes a predicate and a sentence as arguments. The predicate must accept two words as its arguments. Your procedure should return #t if the argument predicate will return true for every two adjacent words in the sentence:
+;
+;> (true-for-all-pairs? equal? '(a b c c d))
+;#F
+;
+;> (true-for-all-pairs? equal? '(a a a a a))
+;#T
+;
+;> (true-for-all-pairs? < '(20 16 5 8 6))
+;#F
+;
+;> (true-for-all-pairs? < '(3 7 19 22 43))
+;#T
+
+(define (true-for-all-pairs? fn lst)
+  (cond ((empty? (cdr lst)) #t)
+        (else (and (fn (car lst) (cadr lst)) (true-for-all-pairs? fn (cdr lst))))))
+
+(true-for-all-pairs? equal? '(a b c c d))
+(true-for-all-pairs? equal? '(a a a a a))
+(true-for-all-pairs? < '(20 16 5 8 6))
+(true-for-all-pairs? < '(3 7 19 22 43))
+
+;19.8  Rewrite true-for-all-pairs? (Exercise 19.7) using true-for-any-pair? (Exercise 19.6) as a helper procedure. Don't use recursion in solving this problem (except for the recursion you've already used to write true-for-any-pair?). Hint: You'll find the not procedure helpful.
+;
+
+
+;19.9  Rewrite either of the sort procedures from Chapter 15 to take two arguments, a list and a predicate. It should sort the elements of that list according to the given predicate:
+;
+;> (sort '(4 23 7 5 16 3) <)
+;(3 4 5 7 16 23)
+;
+;> (sort '(4 23 7 5 16 3) >)
+;(23 16 7 5 4 3)
+;
+;> (sort '(john paul george ringo) before?)
+;(GEORGE JOHN PAUL RINGO)
+;19.10  Write tree-map, analogous to our deep-map, but for trees, using the datum and children selectors.
+;
+
+(define (tree-map fn tree)
+  (cond ((leaf? tree) (map fn tree))
+        (else (append (list (fn (car tree))) (tree-map-in-forest fn (children tree))))))
+
+(define (tree-map-in-forest fn forest)
+  (if (null? forest)
+      '()
+      (append (tree-map fn (car forest)) (tree-map-in-forest fn (cdr forest)))))
+
+(define (cities name-list)
+  (map leaf name-list))
+
+(define (leaf datum)
+  (make-node datum '()))
+
+
+(tree-map count '(world (italy (venezia) (riomaggiore) (firenze) (roma))))
+
+;19.11  Write repeated. (This is a hard exercise!)
+
+(define (repeated fn number)
+   (if (= number 0)
+       (lambda (x) x)
+       (lambda (x) ((repeated fn (- number 1)) (fn x)))))
+
+(define (sq x) (* x x))
+
+(define 2-repeated (repeated sq 2))
+
+(2-repeated 2)
+;
+;19.12  Write tree-reduce. You may assume that the combiner argument can be invoked with no arguments.
+;
+;> (tree-reduce
+;   +
+;   (make-node 3 (list (make-node 4 '())
+;		      (make-node 7 '())
+;		      (make-node 2 (list (make-node 3 '())
+;					 (make-node 8 '()))))))
+;27
+;19.13  Write deep-reduce, similar to tree-reduce, but for structured lists:
+;
+;> (deep-reduce word '(r ((a (m b) (l)) (e (r)))))
+;RAMBLER
+
+
+(define (deep-reduce fn lst)
+  (cond ((empty? lst) "")
+        ((list? lst) (fn (car lst) (deep-reduce-in-list fn (cdr lst))))
+        (else (fn (first lst) (deep-reduce-in-list fn (bf lst))))))
+
+(define (deep-reduce-in-list fn lst)
+  (if (empty? lst)
+      ""
+      (fn (deep-reduce fn (car lst)) (deep-reduce-in-list fn (cdr lst)))))
+
+(deep-reduce word '(a (m b) (l) (e (r))))
