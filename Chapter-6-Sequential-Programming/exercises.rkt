@@ -80,3 +80,45 @@
 ;	((< end (count wd)) (subword (bl wd) start end))
 ;	(else wd)))
 ;You can take your choice, depending on which you think is easier, recursion or higher-order functions.
+
+;21.1  The get-args procedure has a let that creates the variable first, and then that variable is used only once inside the body of the let. Why doesn't it just say the following?
+;
+;(define (get-args n)
+;  (if (= n 0)
+;      '()
+;      (cons (get-arg) (get-args (- n 1)))))
+;21.2  The domain-checking function for equal? is
+;
+;(lambda (x y) #t)
+;This seems silly it's a function of two arguments that ignores both arguments and always returns #t. Since we know ahead of time that the answer is #t, why won't it work to have equal?'s entry in the a-list be
+;
+;(list 'equal? equal? 2 #t)
+;21.3  Every time we want to know something about a function that the user typed in, such as its number of arguments or its domain-checking predicate, we have to do an assoc in *the-functions*. That's inefficient. Instead, rewrite the program so that get-fn returns a function's entry from the a-list, instead of just its name. Then rename the variable fn-name to fn-entry in the functions-loop procedure, and rewrite the selectors scheme-procedure, arg-count, and so on, so that they don't invoke assoc.
+;21.4  Currently, the program always gives the message "argument(s) not in domain" when you try to apply a function to bad arguments. Modify the program so that each record in *the-functions* also contains a specific out-of-domain message like "both arguments must be numbers," then modify functions to look up and print this error message along with "argument(s) not in domain."
+;
+;21.5  Modify the program so that it prompts for the arguments this way:
+;
+;Function: if
+;First Argument: #t
+;Second Argument: paperback
+;Third Argument: writer
+;
+;The result is: PAPERBACK
+;but if there's only one argument, the program shouldn't say First:
+;
+;Function: sqrt
+;Argument: 36
+;
+;The result is 6
+;21.6  The assoc procedure might return #f instead of an a-list record. How come it's okay for arg-count to take the caddr of assoc's return value if (caddr #f) is an error?
+;
+;21.7  Why is the domain-checking predicate for the word? function
+;
+;(lambda (x) #t)
+;instead of the following procedure?
+;
+;(lambda (x) (word? x))
+;21.8  What is the value of the following Scheme expression?
+;
+;(functions)
+;21.9  We said in the recursion chapters that every recursive procedure has to have a base case and a recursive case, and that the recursive case has to somehow reduce the size of the problem, getting closer to the base case. How does the recursive call in get-fn reduce the size of the problem?

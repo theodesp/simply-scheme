@@ -70,50 +70,60 @@
 ;20.8  At the end of the game, if the computer wins or ties, you never find out which square it chose for its final move. Modify the program to correct this. (Notice that this exercise requires you to make play-ttt-helper non-functional.)
 ;
 ;20.9  The way we invoke the game program isn't very user-friendly. Write a procedure game that asks you whether you wish to play x or o, then starts a game. (By definition, x plays first.) Then write a procedure games that allows you to keep playing repeatedly. It can ask "do you want to play again?" after each game. (Make sure that the outcome of each game is still reported, and that the user can choose whether to play x or o before each game.)
+
+;21.1  The get-args procedure has a let that creates the variable first, and then that variable is used only once inside the body of the let. Why doesn't it just say the following?
 ;
-;[1] The only exception is that we've used trace, which prints messages about the progress of a computation.
-;[2] We know that it's still not as beautiful as can be, because of the capital letters and parentheses, but we'll get to that later.
+;(define (get-args n)
+;  (if (= n 0)
+;      '()
+;      (cons (get-arg) (get-args (- n 1)))))
+
+;21.2  The domain-checking function for equal? is
 ;
-;[3] Suppose show returns #f in your version of Scheme. Then you might see
+;(lambda (x y) #t)
+;This seems silly it's a function of two arguments that ignores both arguments and always returns #t. Since we know ahead of time that the answer is #t, why won't it work to have equal?'s entry in the a-list be
 ;
-;> (show 7)
-;7
-;#F
-;But since the return value is unspecified, we try to write programs in such a way that we never use show's return value as the return value from our procedures. That's why we return values like burp.
+;(list 'equal? equal? 2 #t)
+
+; Answer: That will break compatibility as we will have to check the type is not a function
+
+;21.3  Every time we want to know something about a function that the user typed in, such as its number of arguments or its domain-checking predicate, we have to do an assoc in *the-functions*. That's inefficient. Instead, rewrite the program so that get-fn returns a function's entry from the a-list, instead of just its name. Then rename the variable fn-name to fn-entry in the functions-loop procedure, and rewrite the selectors scheme-procedure, arg-count, and so on, so that they don't invoke assoc.
+
+(define (fn-entry fn-name)
+  (assoc fn-name *the-functions*)
+
+;21.4  Currently, the program always gives the message "argument(s) not in domain" when you try to apply a function to bad arguments. Modify the program so that each record in *the-functions* also contains a specific out-of-domain message like "both arguments must be numbers," then modify functions to look up and print this error message along with "argument(s) not in domain."
 ;
-;[4] The term side effect is based on the idea that a procedure may have a useful return value as its main purpose and may also have an effect "on the side." It's a misnomer to talk about the side effect of show, since the effect is its main purpose. But nobody ever says "side return value"!
+;21.5  Modify the program so that it prompts for the arguments this way:
 ;
-;[5] In Chapter 4, we said that the body of a procedure was always one single expression. We lied. But as long as you don't use any procedures with side effects, it doesn't do you any good to evaluate more than one expression in a body.
+;Function: if
+;First Argument: #t
+;Second Argument: paperback
+;Third Argument: writer
 ;
-;[6] For example:
+;The result is: PAPERBACK
+;but if there's only one argument, the program shouldn't say First:
 ;
-;> (cond ((< 4 0)
-;	 (show '(how interesting))
-;	 (show '(4 is less than zero?))
-;	 #f)
-;	((> 4 0)
-;	 (show '(more reasonable))
-;	 (show '(4 really is more than zero))
-;	 'value)
-;	(else
-;	 (show '(you mean 4=0?))
-;	 #f))
-;(MORE REASONABLE)
-;(4 REALLY IS MORE THAN ZERO)
-;VALUE
-;[7] Sometimes people sloppily say that the procedure is a function. In fact, you may hear people be really sloppy and call a non-functional procedure a function!
+;Function: sqrt
+;Argument: 36
 ;
-;[8] You wrote the procedures already-won? and tie-game? in Exercises 10.1 and 10.2:
+;The result is 6
+;21.6  The assoc procedure might return #f instead of an a-list record. How come it's okay for arg-count to take the caddr of assoc's return value if (caddr #f) is an error?
 ;
-;(define (already-won? position who)
-;  (member? (word who who who)  (find-triples position)))
+;21.7  Why is the domain-checking predicate for the word? function
 ;
-;(define (tie-game? position)
-;  (not (member? '_ position)))
-;[9] Alternate version:
+;(lambda (x) #t)
+;instead of the following procedure?
 ;
-;(define (subword wd start end)
-;  (cond ((> start 1) (subword (bf wd) (- start 1) (- end 1)))
-;	((< end (count wd)) (subword (bl wd) start end))
-;	(else wd)))
-;You can take your choice, depending on which you think is easier, recursion or higher-order functions.
+;(lambda (x) (word? x))
+
+; Answer : So it can check if its a word actually
+  
+;21.8  What is the value of the following Scheme expression?
+
+; Answer: Nothing it just prints to screen
+;
+;(functions)
+;21.9  We said in the recursion chapters that every recursive procedure has to have a base case and a recursive case, and that the recursive case has to somehow reduce the size of the problem, getting closer to the base case. How does the recursive call in get-fn reduce the size of the problem?
+
+; Answer: By exiting after it accepts a valid line
