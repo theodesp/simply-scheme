@@ -122,3 +122,59 @@
 ;
 ;(functions)
 ;21.9  We said in the recursion chapters that every recursive procedure has to have a base case and a recursive case, and that the recursive case has to somehow reduce the size of the problem, getting closer to the base case. How does the recursive call in get-fn reduce the size of the problem?
+
+
+;22.1  Write a concatenate procedure that takes two arguments: a list of names of input files, and one name for an output file. The procedure should copy all of the input files, in order, into the output file.
+;
+;22.2  Write a procedure to count the number of lines in a file. It should take the filename as argument and return the number.
+;
+;22.3  Write a procedure to count the number of words in a file. It should take the filename as argument and return the number.
+;
+;22.4  Write a procedure to count the number of characters in a file, including space characters. It should take the filename as argument and return the number.
+;
+;22.5  Write a procedure that copies an input file to an output file but eliminates multiple consecutive copies of the same line. That is, if the input file contains the lines
+;
+;John Lennon
+;Paul McCartney
+;Paul McCartney
+;George Harrison
+;
+;
+;Paul McCartney
+;Ringo Starr
+;then the output file should contain
+;
+;John Lennon
+;Paul McCartney
+;George Harrison
+;
+;Paul McCartney
+;Ringo Starr
+;22.6  Write a lookup procedure that takes as arguments a filename and a word. The procedure should print (on the screen, not into another file) only those lines from the input file that include the chosen word.
+;
+;22.7  Write a page procedure that takes a filename as argument and prints the file a screenful at a time. Assume that a screen can fit 24 lines; your procedure should print 23 lines of the file and then a prompt message, and then wait for the user to enter a (probably empty) line. It should then print the most recent line from the file again (so that the user will see some overlap between screenfuls) and 22 more lines, and so on until the file ends.
+;
+;22.8  A common operation in a database program is to join two databases, that is, to create a new database combining the information from the two given ones. There has to be some piece of information in common between the two databases. For example, suppose we have a class roster database in which each record includes a student's name, student ID number, and computer account name, like this:
+;
+;((john alec entwistle) 04397 john)
+;((keith moon) 09382 kmoon)
+;((peter townshend) 10428 pete)
+;((roger daltrey) 01025 roger)
+;We also have a grade database in which each student's grades are stored according to computer account name:
+;
+;(john 87 90 76 68 95)
+;(kmoon 80 88 95 77 89)
+;(pete 100 92 80 65 72)
+;(roger 85 96 83 62 74)
+;We want to create a combined database like this:
+;
+;((john alec entwistle) 04397 john 87 90 76 68 95)
+;((keith moon) 09382 kmoon 80 88 95 77 89)
+;((peter townshend) 10428 pete 100 92 80 65 72)
+;((roger daltrey) 01025 roger 85 96 83 62 74)
+;in which the information from the roster and grade databases has been combined for each account name.
+;
+;Write a program join that takes five arguments: two input filenames, two numbers indicating the position of the item within each record that should overlap between the files, and an output filename. For our example, we'd say
+;
+;> (join "class-roster" "grades" 3 1 "combined-file")
+;In our example, both files are in alphabetical order of computer account name, the account name is a word, and the same account name never appears more than once in each file. In general, you may assume that these conditions hold for the item that the two files have in common. Your program should not assume that every item in one file also appears in the other. A line should be written in the output file only for the items that do appear in both files.
