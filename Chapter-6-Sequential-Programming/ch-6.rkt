@@ -494,3 +494,69 @@
       #f
       (begin (show line outp)
 	     (merge-copy (read-string inp) inp outp))))
+
+(define v (make-vector 5))
+(vector-set! v 0 'shoe)
+(vector-set! v 3 'bread)
+(vector-set! v 2 '(savoy truffle))
+(vector-ref v 3)
+
+(define *lap-vector* (make-vector 100))
+
+(define (initialize-lap-vector index)
+  (if (< index 0)
+      'done
+      (begin (vector-set! *lap-vector* index 0)
+	     (initialize-lap-vector (- index 1)))))
+
+(define (lap car-number)
+  (vector-set! *lap-vector*
+	       car-number
+	       (+ (vector-ref *lap-vector* car-number) 1))
+  (vector-ref *lap-vector* car-number))
+
+(define (card-list)
+  (reduce append
+	  (map (lambda (suit) (map (lambda (rank) (word suit rank))
+				   '(a 2 3 4 5 6 7 8 9 10 j q k)))
+	       '(h s d c))))
+
+(define (make-deck)
+  (shuffle! (list->vector (card-list)) 51))
+
+(define (shuffle! deck index)
+  (if (< index 0)
+      deck
+      (begin (vector-swap! deck index (random (+ index 1)))
+	     (shuffle! deck (- index 1)))))
+
+(define (vector-swap! vector index1 index2)
+  (let ((temp (vector-ref vector index1)))
+    (vector-set! vector index1 (vector-ref vector index2))
+    (vector-set! vector index2 temp)))
+
+(define (list->vector lst)
+  (l->v-helper (make-vector (length lst)) lst 0))
+
+(define (l->v-helper vec lst index)
+  (if (= index (vector-length vec))
+      vec
+      (begin (vector-set! vec index (car lst))
+	     (l->v-helper vec (cdr lst) (+ index 1)))))
+
+(define (list-square numbers)
+  (if (null? numbers)
+      '()
+      (cons (square (car numbers))
+	    (list-square (cdr numbers)))))
+
+(define (vector-square numbers)
+  (vec-sq-helper (make-vector (vector-length numbers))
+		 numbers
+		 (- (vector-length numbers) 1)))
+
+(define (vec-sq-helper new old index)
+  (if (< index 0)
+      new
+      (begin (vector-set! new index (square (vector-ref old index)))
+	     (vec-sq-helper new old (- index 1)))))
